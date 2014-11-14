@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+  <meta charset="UTF-8">
+  <meta name="description" content="">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="">
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="http:////maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/ladda-bootstrap/0.1.0/ladda-themeless.min.css">
+  <style>
+  </style>
+  <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script>
+    ENV = {FEATURES: {'query-params-new': true}};
+  </script>
+  <script>
+    function getCookie(name) {
+      var cookieValue = null;
+      if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+          var cookie = jQuery.trim(cookies[i]);
+          // Does this cookie string begin with the name we want?
+          if (cookie.substring(0, name.length + 1) == (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+    function csrfSafeMethod(method) {
+      // these HTTP methods do not require CSRF protection
+      return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+  </script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/handlebars.js/1.3.0/handlebars.min.js"></script>
+  <script src="http://builds.emberjs.com/release/ember.js"></script>
+  <script src="http://builds.emberjs.com/beta/ember-data.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/ladda-bootstrap/0.1.0/spin.min.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/ladda-bootstrap/0.1.0/ladda.min.js"></script>
+  <script src="{{STATIC_URL}}js/lib/ember-data-django-rest-adapter.js"></script>
+  <script src="{{STATIC_URL}}js/app.js"></script>
+  <script src="{{STATIC_URL}}js/models.js"></script>
+</head>
+<body>
+{% verbatim %}
+<script type="text/x-handlebars" data-template-name="application">
+  <header class="navbar navbar-static-top brand-nav navbar-default">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#brand-navbar-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        {{#link-to 'index' class="navbar-brand"}}Brand{{/link-to}}
+      </div>
+      <nav class="collapse navbar-collapse" role="navigation" id="brand-navbar-collapse">
+        <ul class="nav navbar-nav">
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          {{#if controllers.session.isAuthenticated}}
+          <button type="button" {{action 'logout' target=controllers.session}}class="btn btn-default navbar-btn">Logout</button>
+          {{else}}
+          {{#link-to 'login' class="btn btn-primary navbar-btn"}}Login{{/link-to}}
+          {{/if}}
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <div class="container" style="min-height: 700px">
+  {{outlet}}
+  </div>
+  <footer class="footer white">
+    <div class="container">
+      <p class="copyright">&copy; 2014 Django-Full-Embretard, ltd. All Rights Reserved</p>
+      <div class="footer-logo">
+        Django-Full-Embretard
+      </div>
+    </div>
+  </footer>
+</script>
+<script type="text/x-handlebars" data-template-name="home">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="jumbotron">
+        <h1>Welcome to Django-Full-Embretard's Home page.</h1>
+        <p>You logged in, great job.</p>
+        {{#link-to 'index' class="btn btn-primary btn-lg"}}Go back to the splash page{{/link-to}}
+      </div>
+    </div>
+  </div>
+</script>
+<script type="text/x-handlebars" data-template-name="index">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="jumbotron">
+        <h1>Welcome to Django-Full-Embretard.</h1>
+        <p>You've got Django & Ember all wrapped up nicely.</p>
+        {{#link-to 'home' class="btn btn-primary btn-lg"}}Check out the home page{{/link-to}}
+      </div>
+    </div>
+  </div>
+</script>
+<script type="text/x-handlebars" data-template-name="login">
+  <div class="container min-container">
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="page-header"><h2>Brand login</h2></div>
+        <div class="row">
+          <div class="col-sm-8 col-sm-offset-2">
+            <form class="form-horizontal" role="form" {{action 'login' on="submit" target=controllers.application.controllers.session}}>
+            <div class="form-group">
+              <div class="col-sm-12">
+                {{input type="email" value=controllers.application.controllers.session.email class="form-control input-lg" placeholder="Email"}}
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-12">
+                {{input type="password" value=controllers.application.controllers.session.password class="form-control input-lg" placeholder="Password"}}
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-12">
+                <button type="submit" class="btn btn-primary btn-lg btn-block">Sign In</button>
+              </div>
+            </div>
+            </form>
+            {{#if controllers.authorizedAccess.unauthorized}}
+            <div class="alert alert-danger fade-in" role="alert">
+              <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+              <h4>Whoa there!</h4>
+              <p>You're not authorized for that part of the site</p>
+            </div>
+            {{/if}}
+            {{#if controllers.application.controllers.session.errorMessage}}
+            <div class="alert alert-danger fade-in" role="alert">
+              <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+              <h4>Whoopsy!</h4>
+              <p>{{controllers.application.controllers.session.errorMessage}}</p>
+            </div>
+            {{/if}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</script>
+{% endverbatim %}
+</body>
+</html>
